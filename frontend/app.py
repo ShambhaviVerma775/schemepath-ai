@@ -3,6 +3,7 @@ SchemePathAI — Streamlit Frontend
 Autonomous student government scheme navigator powered by Gen AI.
 """
 
+import os
 import streamlit as st
 import requests
 import pandas as pd
@@ -465,7 +466,7 @@ def _show_discovery_form():
             if not name.strip():
                 st.error("Please enter your name.")
             else:
-                fd.update({"name": name, "age": age, "gender": gender, "state": state, "district": district})
+                fd.update({"name": name, "age": age, "gender": gender.lower(), "state": state, "district": district})
                 st.session_state.form_step = 2
                 st.rerun()
 
@@ -778,13 +779,74 @@ def _render_scheme_card(scheme: dict):
             st.button("🌐 Apply Now", disabled=True, use_container_width=True, key=f"apply_{scheme.get('scheme_id','')}")
     with col2:
         if st.button(
-            "🤖 Auto-Navigate",
-            key=f"auto_{scheme.get('scheme_id', '')}",
+            "📋 Get Application Guide",
+            key=f"guide_{scheme.get('scheme_id', '')}",
             use_container_width=True,
         ):
-            _auto_apply(scheme)
+            _get_guide(scheme)
 
     st.markdown("<hr style='border-color:#F0F0F0; margin:8px 0;'/>", unsafe_allow_html=True)
+
+
+def _get_guide(scheme: dict):
+    if not st.session_state.session_id:
+        st.error("No active session. Please search for schemes first.")
+        return
+
+    payload = {
+        "session_id": st.session_state.session_id,
+        "scheme_id": scheme.get("scheme_id"),
+        "profile": st.session_state.form_data,
+    }
+    with st.spinner(f"🤖 Gemini AI is generating your personalized guide for {scheme.get('name', 'scheme')}..."):
+        result = backend_post("/api/guide", payload)
+
+    if not result or not result.get("success"):
+        st.error("Could not generate guide. Try again.")
+        return
+
+    guide = result.get("guide", {})
+    scheme_name = result.get("scheme_name", scheme.get("name"))
+    portal_url = result.get("portal_url", "")
+
+    st.success(f"📋 Personalized Application Guide — **{scheme_name}**")
+
+    # Pre-filled values
+    st.markdown("### ✏️ Your Details to Fill In")
+    st.info("Copy these values exactly when filling the application form:")
+    pre = guide.get("pre_filled_values", {})
+    cols = st.columns(2)
+    for i, (field, value) in enumerate(pre.items()):
+        cols[i % 2].markdown(f"**{field}:** `{value}`")
+
+    # Step by step
+    st.markdown("### 📍 Step-by-Step Instructions")
+    for step in guide.get("steps", []):
+        st.markdown(f"- {step}")
+
+    # Documents
+    st.markdown("### 📄 Documents Checklist")
+    for doc_item in guide.get("documents_checklist", []):
+        note = f" — *{doc_item.get('note')}*" if doc_item.get("note") else ""
+        st.markdown(f"☐ **{doc_item.get('doc')}**{note}")
+
+    # Pro tips
+    tips = guide.get("pro_tips", [])
+    if tips:
+        st.markdown("### 💡 Pro Tips")
+        for tip in tips:
+            st.markdown(f"- 💡 {tip}")
+
+    # Deadline + time
+    col1, col2 = st.columns(2)
+    with col1:
+        st.warning(f"⏰ **Deadline:** {guide.get('deadline_note', 'Check portal')}")
+    with col2:
+        st.info(f"🕐 **Estimated time:** {guide.get('estimated_time', '30-45 mins')}")
+
+    # Open portal button
+    if portal_url:
+        st.link_button("🌐 Open Portal Now", portal_url, use_container_width=True)
 
 
 def _auto_apply(scheme: dict):
@@ -802,14 +864,48 @@ def _auto_apply(scheme: dict):
 
     if result:
         if result.get("success"):
-            st.success(
-                f"✅ {result.get('message', 'Navigation complete!')}\n\n"
-                f"Tracking ID: `{result.get('tracking_id', 'N/A')}`"
+            st.success(f"✅ Agent successfully navigated to **{scheme.get('name')}** portal!")
+
+            # Show what the agent did step by step
+            steps = result.get("steps_completed", [])
+            if steps:
+                st.markdown("**🤖 What the Agent Did (Step by Step):**")
+                for step in steps:
+                    icon = "✅" if step.get("status") == "completed" else "❌"
+                    st.markdown(f"{icon} **Step {step.get('step_number')}:** {step.get('description')}")
+
+                    # Show screenshot for this step if available
+                    ss_path = step.get("screenshot_path")
+                    if ss_path:
+                        # Convert local path to backend URL
+                        ss_filename = os.path.basename(ss_path)
+                        img_url = f"http://localhost:8000/screenshots/{ss_filename}"
+                        try:
+                            img_resp = requests.get(img_url, timeout=3)
+                            if img_resp.status_code == 200:
+                                st.image(img_resp.content, caption=f"Step {step.get('step_number')}: {step.get('description')}", use_container_width=True)
+                        except Exception:
+                            pass
+
+            st.info(
+                "📌 **How this works:** Our AI agent ran an invisible browser session, "
+                "opened the government portal, and navigated through it. "
+                "Government portals require login before forms appear. "
+                "Click below to open the portal and log in — your profile data is loaded and ready."
             )
+
+            portal_url = scheme.get("portal_url", "")
+            if portal_url:
+                st.link_button("🌐 Open Portal to Complete Application", portal_url)
+
+            if result.get("tracking_id"):
+                st.success(f"🎉 Tracking ID: `{result.get('tracking_id')}`")
+
         else:
             st.warning(f"⚠️ {result.get('message', 'Could not complete auto-navigation.')}")
+            st.info("💡 You can still apply manually by clicking **Apply Now** above.")
             if result.get("error_details"):
-                with st.expander("Error Details"):
+                with st.expander("Technical Details"):
                     st.code(result["error_details"])
 
 
