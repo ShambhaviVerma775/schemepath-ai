@@ -27,28 +27,51 @@ logger = logging.getLogger("schemepath.browser_agent")
 PORTAL_CONFIGS: Dict[str, Dict] = {
     "scholarships.gov.in": {
         "name": "National Scholarship Portal (NSP)",
+        # Go directly to NEW student registration — public page, has fillable fields
         "login_url": "https://scholarships.gov.in/fresh/newstudentregistrations",
         "type": "nsp",
     },
     "vidyalakshmi.co.in": {
         "name": "Vidya Lakshmi Portal",
-        "login_url": "https://www.vidyalakshmi.co.in/Students/",
+        # Go directly to student registration form
+        "login_url": "https://www.vidyalakshmi.co.in/Students/scholarshipregister",
         "type": "vidya_lakshmi",
     },
     "pminternship.mca.gov.in": {
         "name": "PM Internship Portal",
-        "login_url": "https://pminternship.mca.gov.in/",
+        # Registration page is public
+        "login_url": "https://pminternship.mca.gov.in/register/",
         "type": "pm_internship",
+    },
+    "pmkvyproject.org": {
+        "name": "PMKVY Portal",
+        "login_url": "https://www.pmkvyproject.org",
+        "type": "pmkvy",
     },
     "pmkvyofficial.org": {
         "name": "PMKVY Portal",
-        "login_url": "https://www.pmkvyofficial.org",
+        "login_url": "https://www.pmkvyproject.org",
         "type": "pmkvy",
     },
     "myscheme.gov.in": {
         "name": "MyScheme Portal",
         "login_url": "https://www.myscheme.gov.in",
         "type": "myscheme",
+    },
+    "ugcnet.nta.nic.in": {
+        "name": "UGC NET Portal",
+        "login_url": "https://ugcnet.nta.nic.in",
+        "type": "generic",
+    },
+    "online-inspire.gov.in": {
+        "name": "DST INSPIRE Portal",
+        "login_url": "https://online-inspire.gov.in",
+        "type": "generic",
+    },
+    "nosmsje.gov.in": {
+        "name": "National Overseas Scholarship Portal",
+        "login_url": "https://nosmsje.gov.in",
+        "type": "generic",
     },
 }
 

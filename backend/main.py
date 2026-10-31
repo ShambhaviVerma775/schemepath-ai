@@ -9,15 +9,18 @@ Endpoints:
 """
 
 import logging
+import os
 import uvicorn
 from contextlib import asynccontextmanager
 from typing import Dict
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from agents.scheme_agent import run_scheme_agent
 from agents.browser_agent import run_browser_agent
+from tools.guide_generator import ApplicationGuideGenerator
 from models.schemas import (
     SchemeDiscoveryRequest,
     SchemeDiscoveryResponse,
@@ -67,6 +70,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Serve screenshots so frontend can display them
+SCREENSHOTS_DIR = os.path.join(os.path.dirname(__file__), "screenshots")
+os.makedirs(SCREENSHOTS_DIR, exist_ok=True)
+app.mount("/screenshots", StaticFiles(directory=SCREENSHOTS_DIR), name="screenshots")
+
 
 # ─── Routes ───────────────────────────────────────────────────────────────────
 
@@ -108,6 +116,27 @@ async def discover_schemes(request: SchemeDiscoveryRequest) -> SchemeDiscoveryRe
         response.total_found,
     )
     return response
+
+
+@app.post("/api/guide", tags=["Applications"])
+async def get_application_guide(request: ApplicationRequest) -> dict:
+    """Generate a personalized Gemini AI application guide for a scheme."""
+    session_data = sessions.get(request.session_id)
+    scheme = None
+    if session_data:
+        scheme = next(
+            (s for s in session_data.eligible_schemes if s.scheme_id == request.scheme_id),
+            None,
+        )
+    if not scheme:
+        raise HTTPException(status_code=404, detail="Scheme not found in session.")
+    try:
+        generator = ApplicationGuideGenerator()
+        guide = generator.generate(request.profile, scheme)
+        return {"success": True, "guide": guide, "scheme_name": scheme.name, "portal_url": scheme.portal_url}
+    except Exception as exc:
+        logger.exception("Guide generation failed: %s", exc)
+        raise HTTPException(status_code=500, detail=str(exc))
 
 
 @app.post("/api/apply", response_model=ApplicationResponse, tags=["Applications"])
