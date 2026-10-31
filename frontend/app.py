@@ -13,7 +13,7 @@ from typing import Optional
 # ─── Page Configuration ────────────────────────────────────────────────────────
 
 st.set_page_config(
-    page_title="SchemePathAI",
+    page_title="SCHEMEPATH-AI",
     page_icon=None,
     layout="wide",
     initial_sidebar_state="expanded",
@@ -102,56 +102,280 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
 
-    /* ── Streamlit Button Overrides (Blue palette replacing red) ── */
-    .stButton > button,
-    button[kind="primary"],
-    button[kind="secondary"],
-    [data-testid="baseButton-primary"],
-    [data-testid="baseButton-secondary"] {
+    /* ── Sidebar General Styling ── */
+    section[data-testid="stSidebar"] {
+        background-color: #0B132B !important;
+        border-right: 1.5px solid #1E293B !important;
+    }
+
+    /* Make sidebar comfortable, roomy and bigger when open */
+    section[data-testid="stSidebar"]:not([data-collapsed="true"]) {
+        min-width: 360px !important;
+    }
+
+    section[data-testid="stSidebar"][data-collapsed="true"] {
+        min-width: 0 !important;
+        max-width: 0 !important;
+    }
+
+    [data-testid="stSidebarUserContent"] {
+        padding: 0 1.25rem 2rem 1.25rem !important;
+    }
+
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3,
+    [data-testid="stSidebar"] h4,
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] span,
+    [data-testid="stSidebar"] label {
+        color: #F8FAFC !important;
+    }
+
+    /* ── Sidebar Collapse and Expand Buttons ── */
+    [data-testid="stSidebarHeader"] {
+        background-color: #0B132B !important;
+        padding: 14px 16px 8px 16px !important;
+    }
+
+    /* Collapse button (top right of sidebar header) */
+    [data-testid="stSidebarCollapseButton"],
+    [data-testid="stSidebarCollapseButton"] button {
+        background-color: #162447 !important;
+        color: #38BDF8 !important;
+        border: 1.5px solid #1F4068 !important;
+        border-radius: 8px !important;
+        width: 36px !important;
+        height: 36px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    [data-testid="stSidebarCollapseButton"] button svg,
+    [data-testid="stSidebarCollapseButton"] svg {
+        fill: #38BDF8 !important;
+        color: #38BDF8 !important;
+        stroke: #38BDF8 !important;
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    [data-testid="stSidebarCollapseButton"] button:hover,
+    [data-testid="stSidebarCollapseButton"]:hover {
+        background-color: #1D4ED8 !important;
+        border-color: #60A5FA !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.45) !important;
+        transform: scale(1.05) !important;
+    }
+
+    [data-testid="stSidebarCollapseButton"] button:hover svg,
+    [data-testid="stSidebarCollapseButton"]:hover svg {
+        fill: #FFFFFF !important;
+        color: #FFFFFF !important;
+        stroke: #FFFFFF !important;
+    }
+
+    /* Expand button (floats at top-left when sidebar is collapsed/hidden) */
+    [data-testid="stExpandSidebarButton"],
+    button[data-testid="stExpandSidebarButton"],
+    [data-testid="stSidebarCollapsedControl"],
+    [data-testid="stSidebarCollapsedControl"] button,
+    [data-testid="collapsedControl"],
+    [data-testid="collapsedControl"] button {
+        display: inline-flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: fixed !important;
+        top: 14px !important;
+        left: 14px !important;
+        background-color: #0B132B !important;
+        color: #38BDF8 !important;
+        border: 1.5px solid #1F4068 !important;
+        border-radius: 8px !important;
+        width: 40px !important;
+        height: 40px !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        z-index: 999999 !important;
+        box-shadow: 0 4px 14px rgba(11, 19, 43, 0.35) !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    [data-testid="stExpandSidebarButton"] svg,
+    button[data-testid="stExpandSidebarButton"] svg,
+    [data-testid="stSidebarCollapsedControl"] svg,
+    [data-testid="collapsedControl"] svg {
+        fill: #38BDF8 !important;
+        color: #38BDF8 !important;
+        stroke: #38BDF8 !important;
+        width: 22px !important;
+        height: 22px !important;
+    }
+
+    [data-testid="stExpandSidebarButton"]:hover,
+    button[data-testid="stExpandSidebarButton"]:hover,
+    [data-testid="stSidebarCollapsedControl"]:hover,
+    [data-testid="stSidebarCollapsedControl"] button:hover,
+    [data-testid="collapsedControl"]:hover,
+    [data-testid="collapsedControl"] button:hover {
+        background-color: #1D4ED8 !important;
+        border-color: #60A5FA !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 6px 18px rgba(37, 99, 235, 0.5) !important;
+        transform: scale(1.08) !important;
+    }
+
+    [data-testid="stExpandSidebarButton"]:hover svg,
+    button[data-testid="stExpandSidebarButton"]:hover svg,
+    [data-testid="stSidebarCollapsedControl"]:hover svg,
+    [data-testid="collapsedControl"]:hover svg {
+        fill: #FFFFFF !important;
+        color: #FFFFFF !important;
+        stroke: #FFFFFF !important;
+    }
+
+    /* ── Main Canvas Smooth Centralisation & Symmetrical Layout ── */
+    .stMain {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        width: 100% !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .stMain > div:first-child {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
+    .block-container,
+    [data-testid="stMainBlockContainer"] {
+        max-width: 1180px !important;
+        width: 100% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+        padding-top: 2.5rem !important;
+        padding-bottom: 4rem !important;
+        box-sizing: border-box !important;
+        transition: max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    padding 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    margin 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    /* ── Sidebar Navigation Buttons (Executive Button Cards) ── */
+    [data-testid="stSidebar"] .stButton {
+        margin-bottom: 4px !important;
+    }
+
+    [data-testid="stSidebar"] .stButton > button {
+        width: 100% !important;
+        text-align: left !important;
+        justify-content: flex-start !important;
+        padding: 12px 16px !important;
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
+        border-radius: 8px !important;
+        letter-spacing: 0.02em !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    /* Inactive Navigation Buttons in Sidebar */
+    [data-testid="stSidebar"] .stButton > button[kind="secondary"],
+    [data-testid="stSidebar"] .stButton > button:not([kind="primary"]) {
+        background-color: #162447 !important;
+        color: #E2E8F0 !important;
+        border: 1.5px solid #1F4068 !important;
+        border-left: 4.5px solid #334155 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    [data-testid="stSidebar"] .stButton > button[kind="secondary"]:hover,
+    [data-testid="stSidebar"] .stButton > button:not([kind="primary"]):hover {
+        background-color: #1F3460 !important;
+        border-color: #38BDF8 !important;
+        border-left-color: #38BDF8 !important;
+        color: #FFFFFF !important;
+        transform: translateX(4px) !important;
+        box-shadow: 0 3px 10px rgba(56, 189, 248, 0.25) !important;
+    }
+
+    /* Active Navigation Button in Sidebar */
+    [data-testid="stSidebar"] .stButton > button[kind="primary"] {
+        background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 100%) !important;
+        color: #FFFFFF !important;
+        border: 1.5px solid #60A5FA !important;
+        border-left: 5px solid #38BDF8 !important;
+        box-shadow: 0 3px 12px rgba(37, 99, 235, 0.45) !important;
+        transform: translateX(4px) !important;
+    }
+
+    /* Sidebar Dropdowns and Inputs */
+    [data-testid="stSidebar"] [data-baseweb="select"] {
+        background-color: #162447 !important;
+        border: 1px solid #1F4068 !important;
+        border-radius: 6px !important;
+        color: #F8FAFC !important;
+    }
+
+    [data-testid="stSidebar"] [data-baseweb="tag"] {
+        background-color: #1E3A8A !important;
+        color: #BFDBFE !important;
+        border-radius: 4px !important;
+        border: 1px solid #3B82F6 !important;
+    }
+
+    [data-testid="stSidebar"] .stSlider > div {
+        color: #F8FAFC !important;
+    }
+
+    /* ── Main Canvas Button Overrides (Blue palette replacing red) ── */
+    .stMain .stButton > button,
+    .stMain button[kind="primary"],
+    .stMain button[kind="secondary"] {
         border-radius: 8px !important;
         font-weight: 600 !important;
         letter-spacing: 0.01em !important;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
 
-    /* Primary Buttons: Vivid Royal Blue Gradient */
-    .stButton > button[kind="primary"],
-    button[kind="primary"],
-    [data-testid="baseButton-primary"] {
+    /* Primary Buttons in Main: Vivid Royal Blue Gradient */
+    .stMain .stButton > button[kind="primary"],
+    .stMain button[kind="primary"] {
         background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 100%) !important;
         color: #FFFFFF !important;
         border: 1px solid #1D4ED8 !important;
         box-shadow: 0 2px 6px rgba(37, 99, 235, 0.22) !important;
     }
-    .stButton > button[kind="primary"]:hover,
-    button[kind="primary"]:hover,
-    [data-testid="baseButton-primary"]:hover {
+    .stMain .stButton > button[kind="primary"]:hover,
+    .stMain button[kind="primary"]:hover {
         background: linear-gradient(135deg, #1E40AF 0%, #1D4ED8 100%) !important;
         border-color: #1E40AF !important;
         box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
         transform: translateY(-1px) !important;
     }
-    .stButton > button[kind="primary"]:active,
-    button[kind="primary"]:active,
-    [data-testid="baseButton-primary"]:active {
-        transform: translateY(0px) !important;
-        box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2) !important;
-    }
 
-    /* Secondary Buttons: Soft Pearl Surface with Royal Blue Accents */
-    .stButton > button[kind="secondary"],
-    .stButton > button:not([kind="primary"]),
-    button[kind="secondary"],
-    [data-testid="baseButton-secondary"] {
+    /* Secondary Buttons in Main: Soft Pearl Surface with Royal Blue Accents */
+    .stMain .stButton > button[kind="secondary"],
+    .stMain .stButton > button:not([kind="primary"]),
+    .stMain button[kind="secondary"] {
         background-color: #F8FAFC !important;
         color: #1D4ED8 !important;
         border: 1.5px solid #BFDBFE !important;
         box-shadow: 0 1px 3px rgba(37, 99, 235, 0.06) !important;
     }
-    .stButton > button[kind="secondary"]:hover,
-    .stButton > button:not([kind="primary"]):hover,
-    button[kind="secondary"]:hover,
-    [data-testid="baseButton-secondary"]:hover {
+    .stMain .stButton > button[kind="secondary"]:hover,
+    .stMain .stButton > button:not([kind="primary"]):hover,
+    .stMain button[kind="secondary"]:hover {
         background-color: #EFF6FF !important;
         border-color: #3B82F6 !important;
         color: #1E40AF !important;
@@ -229,91 +453,6 @@ st.markdown("""
     .stProgress > div > div {
         background-color: #CBD5E1 !important;
         border-radius: 6px !important;
-    }
-
-    /* ── Expanded & Professional Sidebar ── */
-    section[data-testid="stSidebar"] {
-        min-width: 340px !important;
-        max-width: 380px !important;
-        width: 360px !important;
-        background-color: #0B132B !important;
-        border-right: 1px solid #1E293B !important;
-    }
-
-    section[data-testid="stSidebar"] > div:first-child {
-        min-width: 340px !important;
-        max-width: 380px !important;
-        width: 360px !important;
-        padding: 2rem 1.4rem !important;
-    }
-
-    [data-testid="stSidebar"] h1,
-    [data-testid="stSidebar"] h2,
-    [data-testid="stSidebar"] h3,
-    [data-testid="stSidebar"] h4,
-    [data-testid="stSidebar"] p,
-    [data-testid="stSidebar"] span,
-    [data-testid="stSidebar"] label {
-        color: #F8FAFC !important;
-    }
-
-    /* Sidebar Navigation Tabs */
-    [data-testid="stSidebar"] .stRadio > div {
-        background: transparent !important;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        padding: 0;
-    }
-
-    [data-testid="stSidebar"] .stRadio div[role="radiogroup"] > label {
-        background-color: #162447 !important;
-        border: 1px solid #1F4068 !important;
-        border-radius: 6px !important;
-        padding: 10px 14px !important;
-        margin: 0 !important;
-        color: #CBD5E1 !important;
-        font-size: 0.88rem !important;
-        font-weight: 500 !important;
-        cursor: pointer;
-        transition: all 0.15s ease-in-out;
-        display: flex;
-        align-items: center;
-    }
-
-    [data-testid="stSidebar"] .stRadio div[role="radiogroup"] > label:hover {
-        background-color: #1F4068 !important;
-        border-color: #38BDF8 !important;
-        color: #FFFFFF !important;
-    }
-
-    /* Selected radio state */
-    [data-testid="stSidebar"] .stRadio div[role="radiogroup"] > label[data-checked="true"],
-    [data-testid="stSidebar"] .stRadio div[role="radiogroup"] > label:has(input:checked) {
-        background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 100%) !important;
-        border-color: #60A5FA !important;
-        color: #FFFFFF !important;
-        font-weight: 600 !important;
-        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4) !important;
-    }
-
-    /* Sidebar Dropdowns and Inputs */
-    [data-testid="stSidebar"] [data-baseweb="select"] {
-        background-color: #162447 !important;
-        border: 1px solid #1F4068 !important;
-        border-radius: 6px !important;
-        color: #F8FAFC !important;
-    }
-
-    [data-testid="stSidebar"] [data-baseweb="tag"] {
-        background-color: #1E3A8A !important;
-        color: #BFDBFE !important;
-        border-radius: 4px !important;
-        border: 1px solid #3B82F6 !important;
-    }
-
-    [data-testid="stSidebar"] .stSlider > div {
-        color: #F8FAFC !important;
     }
 
     /* ── Hero Container (Vibrant Navy / Deep Sapphire) ── */
@@ -655,41 +794,30 @@ if "guide_cache" not in st.session_state:
 
 with st.sidebar:
     st.markdown("""
-    <div style='padding: 6px 0 16px 0; border-bottom: 1px solid #1E293B; margin-bottom: 18px;'>
-        <div style='font-size: 1.3rem; font-weight: 800; color: #FFFFFF; letter-spacing: 0.04em;'>
-            SCHEMEPATH<span style='color: #38BDF8;'>AI</span>
+    <div style='padding: 4px 0 16px 0; border-bottom: 1px solid #1E293B; margin-bottom: 20px;'>
+        <div style='font-size: 1.35rem; font-weight: 800; color: #FFFFFF; letter-spacing: 0.05em;'>
+            SCHEMEPATH<span style='color: #38BDF8;'>-AI</span>
         </div>
-        <div style='font-size: 0.78rem; color: #94A3B8; margin-top: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;'>
+        <div style='font-size: 0.76rem; color: #94A3B8; margin-top: 5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;'>
             National Student Scheme Navigator
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    nav_options = ["Home", "Discover Schemes", "My Applications", "About"]
-    nav_index_map = {
-        "Home": 0,
-        "Discover": 1,
-        "Applications": 2,
-        "About": 3,
-    }
-    nav_reverse_map = {
-        "Home": "Home",
-        "Discover Schemes": "Discover",
-        "My Applications": "Applications",
-        "About": "About",
-    }
-
-    current_idx = nav_index_map.get(st.session_state.page, 0)
-    selected_nav = st.radio(
-        "Navigation Menu",
-        nav_options,
-        index=current_idx,
-        label_visibility="collapsed",
-    )
-    new_page = nav_reverse_map[selected_nav]
-    if new_page != st.session_state.page:
-        st.session_state.page = new_page
-        st.rerun()
+    # Sleek full-width navigation button cards (No native radio circles)
+    nav_items = [
+        ("Home", "Home"),
+        ("Discover Schemes", "Discover"),
+        ("My Applications", "Applications"),
+        ("About", "About"),
+    ]
+    for label, key in nav_items:
+        is_active = (st.session_state.page == key)
+        b_type = "primary" if is_active else "secondary"
+        if st.button(label, key=f"nav_btn_{key}", use_container_width=True, type=b_type):
+            if st.session_state.page != key:
+                st.session_state.page = key
+                st.rerun()
 
     # If results are active on Discover page, render the dropdown filter in the sidebar
     if st.session_state.page == "Discover" and st.session_state.results is not None:
@@ -1094,7 +1222,7 @@ def _show_results():
     schemes: list = data.get("eligible_schemes", [])
 
     # ── Summary Metrics Cards (Soft tinted surfaces, dark navy numbers) ────────
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2, c3 = st.columns(3)
     with c1:
         st.markdown(f"""
         <div class='metric-card metric-blue'>
@@ -1108,12 +1236,6 @@ def _show_results():
             <div class='metric-val'>{len(data.get("categories_covered", []))}</div>
         </div>""", unsafe_allow_html=True)
     with c3:
-        st.markdown(f"""
-        <div class='metric-card metric-green'>
-            <div class='metric-label'>Est. Total Benefit</div>
-            <div class='metric-val'>{data.get("estimated_total_benefit", "—")}</div>
-        </div>""", unsafe_allow_html=True)
-    with c4:
         st.markdown(f"""
         <div class='metric-card metric-teal'>
             <div class='metric-label'>Processing Time</div>
