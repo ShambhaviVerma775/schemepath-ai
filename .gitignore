@@ -1,0 +1,23 @@
+# Environment & secrets
+.env
+*.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.Python
+venv/
+env/
+*.egg-info/
+
+# Data & DB (too large for GitHub)
+data/chromadb/
+screenshots/
+
+# Mac
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
